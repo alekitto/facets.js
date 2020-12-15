@@ -1,0 +1,37 @@
+@import "icons/icons";
+
+:root {
+    --facets-js-example: transparent;
+    --facets-js-icon-height: .75rem;
+}
+
+i[class^="facets-ico-"]:before, i[class*=" facets-ico-"]:before {
+    font-size: var(--facets-js-icon-height);
+}
+
+.facets-js-wrapper {
+    &:active, &:focus, &:focus-within {
+        outline: auto 2px Highlight;
+        outline: auto 5px -webkit-focus-ring-color;
+    }
+
+    > input[type=text] {
+        &, &:active, &:focus, &:hover {
+            outline: 0;
+        }
+    }
+
+    .new-filter-btn {
+        text-decoration: none;
+    }
+
+    .filter-container {
+        input[type=text] {
+            min-width: 4.75rem;
+        }
+
+        > .filter-label {
+            white-space: nowrap;
+        }
+    }
+}

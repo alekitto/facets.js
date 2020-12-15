@@ -1,0 +1,45 @@
+${{ name }}-font: "facets-js-{{ name }}";
+
+@font-face {
+    font-family: ${{ name }}-font;
+    src: {{{ fontSrc }}};
+}
+
+{{# if selector }}
+{{ selector }}:before {
+{{ else }}
+{{ tag }}[class^="{{prefix}}-"]:before, {{ tag }}[class*=" {{prefix}}-"]:before {
+{{/ if }}
+    font-family: ${{ name }}-font !important;
+    font-style: normal;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+:root {
+{{# each codepoints }}
+    {{# if ../selector }}
+    --{{ ../selector }}-{{ @key }}: "\\{{ codepoint this }}";
+    {{ else }}
+    --{{ ../prefix }}-{{ @key }}: "\\{{ codepoint this }}";
+    {{/ if }}
+{{/ each }}
+}
+
+{{# each codepoints }}
+    {{# if ../selector }}
+{{ ../selector }}.{{ ../prefix }}-{{ @key }}:before {
+    {{ else }}
+{{ tag }}.{{ ../prefix }}-{{ @key }}:before {
+    {{/ if }}
+    {{# if ../selector }}
+    content: var(--{{ ../selector }}-{{ @key }});
+    {{ else }}
+    content: var(--{{ ../prefix }}-{{ @key }});
+    {{/ if }}
+}
+{{/ each }}
