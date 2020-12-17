@@ -7,4 +7,8 @@ export const en = {
     'ends with': 'ends with',
     'is empty': 'is empty',
     'is not empty': 'is not empty',
+    'greater than': 'greater than',
+    'greater than or equal': 'greater than or equal',
+    'less than': 'less than',
+    'less than or equal': 'less than or equal',
 }

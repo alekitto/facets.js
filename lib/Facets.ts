@@ -1,30 +1,28 @@
 import '../styles/factes-js.scss';
-import { FieldType } from "./FieldType";
-import { createButton } from "./util";
-import { Field } from "./Field";
-import { Filter } from "./Filter";
+import { Field, FieldProps } from './Field';
+import EventTarget from 'event-target-shim';
+import { Filter } from './Filter';
+import { createButton } from './util';
 
 interface FacetsOptions {
     'class-prefix': string;
-    fields: {
-        name: string;
-        label?: string;
-        type: FieldType;
-    }[];
+    fields: FieldProps[];
 }
 
 const DEFAULT_OPTIONS: Omit<FacetsOptions, 'fields'> = {
     'class-prefix': '',
 };
 
-export class Facets {
+export class Facets extends EventTarget {
     private readonly options: FacetsOptions;
     private readonly inputBox: HTMLInputElement;
     private readonly newFilterBtn: HTMLButtonElement;
     private readonly fields: Readonly<Field[]> = [];
     private readonly filters: Filter[] = [];
+    private readonly _appliedFilters = new Map<Filter, { field: string, operator: string, value: any }>();
 
     constructor(private element: HTMLDivElement, options: Partial<FacetsOptions> = {}) {
+        super();
         if (element.tagName !== 'DIV') {
             throw new TypeError('Facets.js only supports div tags');
         }
@@ -38,12 +36,7 @@ export class Facets {
             this.options["class-prefix"] += '-';
         }
 
-        this.fields = Object.freeze(options.fields.map(f => {
-            const obj = new Field(f.name, f.type);
-            obj.label = f.label ?? f.name;
-
-            return obj;
-        }));
+        this.fields = Object.freeze(options.fields.map(f => new Field(f)));
 
         this.element.innerHTML = '';
         this.element.classList.add(this.options["class-prefix"] + 'facets-js-wrapper');
@@ -66,6 +59,10 @@ export class Facets {
         this.inputBox = this.element.appendChild(inputBox);
     }
 
+    get appliedFilters() {
+        return [ ...this._appliedFilters.values() ];
+    }
+
     private createFilter() {
         const filter = new Filter(this.fields, (element: HTMLElement) =>
             this.element.insertBefore(element, this.newFilterBtn)
@@ -78,6 +75,7 @@ export class Facets {
             this.element.removeChild(filter.container);
             this.filters.splice(this.filters.indexOf(filter), 1);
             this.newFilterBtn.style.display = 'block';
+            this._appliedFilters.delete(filter);
         }, { once: true });
 
         filter.addEventListener('open', () => {
@@ -86,7 +84,8 @@ export class Facets {
 
         filter.addEventListener('apply-filter', (e: Event) => {
             this.newFilterBtn.style.display = 'block';
-            console.log(JSON.stringify((e as CustomEvent).detail));
+            const { filter, value } = (e as CustomEvent).detail;
+            this._appliedFilters.set(filter, value);
         });
     }
 }

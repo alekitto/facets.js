@@ -1,8 +1,8 @@
-import { Field } from "./Field";
-import { createButton } from "./util";
-import { FieldType } from "./FieldType";
-import EventTarget from "event-target-shim";
-import { en } from "./i18n/en";
+import { Choice, Choices, Field } from './Field';
+import EventTarget from 'event-target-shim';
+import { FieldType } from './FieldType';
+import { createButton } from './util';
+import { en } from './i18n/en';
 
 const TEXT_OPERATORS = [
     [ 'eq', 'is equal to' ],
@@ -11,6 +11,17 @@ const TEXT_OPERATORS = [
     [ 'nct', 'does not contain' ],
     [ 'sw', 'starts with' ],
     [ 'ew', 'ends with' ],
+    [ 'null', 'is empty' ],
+    [ 'notnull', 'is not empty' ],
+];
+
+const NUMBER_OPERATORS = [
+    [ 'eq', 'is equal to' ],
+    [ 'neq', 'is not equal to' ],
+    [ 'gt', 'greater than' ],
+    [ 'gte', 'greater than or equal' ],
+    [ 'lt', 'less than' ],
+    [ 'lte', 'less than or equal' ],
     [ 'null', 'is empty' ],
     [ 'notnull', 'is not empty' ],
 ];
@@ -91,6 +102,20 @@ export class Filter extends EventTarget {
                 case FieldType.TEXT:
                     this.createTextFilter();
                     break;
+
+                case FieldType.NUMBER:
+                case FieldType.DATE:
+                case FieldType.TIME:
+                    this.createNumberFilter(field.type);
+                    break;
+
+                case FieldType.BOOLEAN:
+                    this.createBooleanFilter();
+                    break;
+
+                case FieldType.CHOICE:
+                    this.createChoiceFilter();
+                    break;
             }
         });
 
@@ -165,6 +190,90 @@ export class Filter extends EventTarget {
         this.other = () => comparandInput.value;
     }
 
+    private createNumberFilter(type: FieldType.NUMBER | FieldType.DATE | FieldType.TIME) {
+        const operatorSelect = this.specContainer.appendChild(document.createElement('select'));
+        for (const op of NUMBER_OPERATORS) {
+            const option = document.createElement('option');
+            option.value = op[0];
+            option.innerText = this.locale[op[1]] ?? op[1];
+
+            operatorSelect.appendChild(option);
+        }
+
+        const comparandInput = this.specContainer.appendChild(document.createElement('input'));
+        comparandInput.value = '';
+        if (FieldType.NUMBER === type) {
+            comparandInput.type = 'number';
+        } else if (FieldType.DATE === type) {
+            comparandInput.type = 'date';
+        } else {
+            comparandInput.type = 'time';
+        }
+
+        operatorSelect.addEventListener('change', e => {
+            const operator = (e.target as HTMLSelectElement).value;
+            comparandInput.style.display = operator === 'null' || operator === 'notnull' ? 'none' : 'block';
+        });
+
+        this.operator = () => {
+            const value = operatorSelect.value;
+            return NUMBER_OPERATORS.find(o => o[0] === value) as [string, string];
+        };
+
+        this.other = () => comparandInput.value;
+    }
+
+    private createBooleanFilter() {
+        const comparandSelect = this.specContainer.appendChild(document.createElement('select'));
+        for (const op of [ ['1', 'Yes'], ['0', 'No'] ]) {
+            const option = document.createElement('option');
+            option.value = op[0];
+            option.innerText = this.locale[op[1]] ?? op[1];
+
+            comparandSelect.appendChild(option);
+        }
+
+        this.operator = () => ['eq', 'is equal to'];
+        this.other = () => comparandSelect.value;
+    }
+
+    private createChoiceFilter() {
+        const comparandSelect = this.specContainer.appendChild(document.createElement('select'));
+        let choices: unknown = this.field?.choices ?? [];
+
+        const loadChoices = (choices: Choice[] | IterableIterator<Choice>) => {
+            comparandSelect.innerHTML = '';
+
+            for (const choice of choices) {
+                const option = document.createElement('option');
+                option.value = choice.value
+                option.innerText = choice.label;
+
+                comparandSelect.appendChild(option);
+            }
+        };
+
+        if ('function' === typeof choices) {
+            choices = choices() as (Choices | Promise<Choices>);
+        }
+
+        if ('then' in (choices as Choices | Promise<Choices>)) {
+            const loadingOption = document.createElement('option');
+            loadingOption.value = '';
+            loadingOption.innerText = this.locale['loading'];
+            comparandSelect.appendChild(loadingOption);
+
+            (choices as Promise<IterableIterator<Choice>>).then(loadChoices, () => {
+                loadingOption.innerText = this.locale['error while loading options'];
+            });
+        } else {
+            loadChoices(choices as Choices);
+        }
+
+        this.operator = () => ['eq', 'is equal to'];
+        this.other = () => comparandSelect.value;
+    }
+
     private applyFilter() {
         if (! this.operator || ! this.other || ! this.field) {
             return;
@@ -174,8 +283,7 @@ export class Filter extends EventTarget {
         const other = this.other();
 
         this.label.innerText = (this.field.label ?? this.field.name) + ' ' + this.locale[operator[1]];
-        if (operator[0] !== 'null' && operator[0]
-            !== 'notnull') {
+        if (operator[0] !== 'null' && operator[0] !== 'notnull') {
             this.label.innerText += ' "' + other + '"';
         }
 
@@ -186,7 +294,7 @@ export class Filter extends EventTarget {
                 value: {
                     field: this.field.name,
                     operator: operator[0],
-                    other,
+                    value: other,
                 },
             },
         }))
