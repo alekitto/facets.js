@@ -1,8 +1,12 @@
 @import "icons/icons";
 
 :root {
-    --facets-js-example: transparent;
     --facets-js-icon-height: .75rem;
+    --facets-js-min-height: 1.5rem;
+    --facets-js-border-radius: .25rem;
+    --facets-js-dropdown-bg: #fff;
+    --facets-js-dropdown-border: 1px solid #333;
+    --facets-js-bg: #fff;
 }
 
 i[class^="facets-ico-"]:before, i[class*=" facets-ico-"]:before {
@@ -10,6 +14,20 @@ i[class^="facets-ico-"]:before, i[class*=" facets-ico-"]:before {
 }
 
 .facets-js-wrapper {
+    min-height: var(--facets-js-min-height);
+    background: var(--facets-js-bg);
+
+    .facets-js-dropdown {
+        position: absolute;
+        background: var(--facets-js-dropdown-bg);
+        border-radius: var(--facets-js-border-radius);
+        border: var(--facets-js-dropdown-border);
+    }
+
+    .facets-js-hide {
+        display: none;
+    }
+
     &:active, &:focus, &:focus-within {
         outline: auto 2px Highlight;
         outline: auto 5px -webkit-focus-ring-color;

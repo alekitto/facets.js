@@ -5,7 +5,9 @@
         "build": "npm run build-icons && npm run build-js",
         "build-icons": "mkdirp styles/icons && fantasticon",
         "build-js": "rollup -c --sourcemap",
-        "dev": "rollup -c --sourcemap --watch"
+        "dev": "rollup -c --sourcemap --watch",
+        "lint": "eslint lib/",
+        "lint-fix": "eslint --fix lib/"
     },
     "browser": "dist/facets-js.umd.js",
     "main": "dist/facets-js.cjs.js",
@@ -13,12 +15,17 @@
     "devDependencies": {
         "@babel/cli": "^7.12.10",
         "@babel/core": "^7.12.10",
+        "@babel/plugin-transform-runtime": "^7.12.10",
         "@babel/preset-env": "^7.12.10",
+        "@babel/runtime": "^7.12.5",
         "@rollup/plugin-babel": "^5.2.2",
         "@rollup/plugin-commonjs": "^11.0.1",
         "@rollup/plugin-node-resolve": "^7.0.0",
         "@rollup/plugin-typescript": "^8.0.0",
+        "@typescript-eslint/eslint-plugin": "^4.8.2",
+        "@typescript-eslint/parser": "^4.8.2",
         "autoprefixer": "^10.1.0",
+        "eslint": "^7.14.0",
         "fantasticon": "^1.0.25",
         "mkdirp": "^1.0",
         "node-sass": "^5.0.0",
