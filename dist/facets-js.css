@@ -1,0 +1,83 @@
+@font-face {
+  font-family: "facets-js-icons";
+  src: url("../dist/icons/547b19fd.woff2?b2a4a50fc2aff8cfb6020b8a6a9e3f16") format("woff2"), url("../dist/icons/322ff544.woff?b2a4a50fc2aff8cfb6020b8a6a9e3f16") format("woff"), url("../dist/icons/9d5ffe18.eot?b2a4a50fc2aff8cfb6020b8a6a9e3f16#iefix") format("embedded-opentype"), url("../dist/icons/f0024f52.ttf?b2a4a50fc2aff8cfb6020b8a6a9e3f16") format("truetype"); }
+
+i[class^="facets-ico-"]:before, i[class*=" facets-ico-"]:before {
+  font-family: "facets-js-icons" !important;
+  font-style: normal;
+  font-weight: normal !important;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; }
+
+:root {
+  --facets-ico-checkmark: "\f101";
+  --facets-ico-cross: "\f102";
+  --facets-ico-forward3: "\f103";
+  --facets-ico-history: "\f104";
+  --facets-ico-minus: "\f105";
+  --facets-ico-play3: "\f106";
+  --facets-ico-plus: "\f107"; }
+
+.facets-ico-checkmark:before {
+  content: var(--facets-ico-checkmark); }
+
+.facets-ico-cross:before {
+  content: var(--facets-ico-cross); }
+
+.facets-ico-forward3:before {
+  content: var(--facets-ico-forward3); }
+
+.facets-ico-history:before {
+  content: var(--facets-ico-history); }
+
+.facets-ico-minus:before {
+  content: var(--facets-ico-minus); }
+
+.facets-ico-play3:before {
+  content: var(--facets-ico-play3); }
+
+.facets-ico-plus:before {
+  content: var(--facets-ico-plus); }
+
+:root {
+  --facets-js-icon-height: .75rem;
+  --facets-js-min-height: 1.5rem;
+  --facets-js-border-radius: .25rem;
+  --facets-js-dropdown-bg: #fff;
+  --facets-js-dropdown-border: 1px solid #333;
+  --facets-js-dropdown-max-heihght: 5rem;
+  --facets-js-bg: #fff; }
+
+i[class^="facets-ico-"]:before, i[class*=" facets-ico-"]:before {
+  font-size: var(--facets-js-icon-height); }
+
+.facets-js-wrapper {
+  min-height: var(--facets-js-min-height);
+  background: var(--facets-js-bg); }
+  .facets-js-wrapper .facets-js-dropdown {
+    position: absolute;
+    background: var(--facets-js-dropdown-bg);
+    border-radius: var(--facets-js-border-radius);
+    border: var(--facets-js-dropdown-border);
+    max-height: var(--facets-js-dropdown-max-heihght); }
+    .facets-js-wrapper .facets-js-dropdown > div {
+      padding: 2.5px; }
+      .facets-js-wrapper .facets-js-dropdown > div.selected {
+        background: blue;
+        color: white; }
+  .facets-js-wrapper .facets-js-hide {
+    display: none; }
+  .facets-js-wrapper:active, .facets-js-wrapper:focus, .facets-js-wrapper:focus-within {
+    outline: auto 2px Highlight;
+    outline: auto 5px -webkit-focus-ring-color; }
+  .facets-js-wrapper > input[type=text], .facets-js-wrapper > input[type=text]:active, .facets-js-wrapper > input[type=text]:focus, .facets-js-wrapper > input[type=text]:hover {
+    outline: 0; }
+  .facets-js-wrapper .new-filter-btn {
+    text-decoration: none; }
+  .facets-js-wrapper .filter-container input[type=text] {
+    min-width: 4.75rem; }
+  .facets-js-wrapper .filter-container > .filter-label {
+    white-space: nowrap; }

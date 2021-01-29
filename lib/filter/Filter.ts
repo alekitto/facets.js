@@ -30,17 +30,20 @@ const NUMBER_OPERATORS: [string, keyof Localization][] = [
 
 export class Filter extends EventTarget implements FilterInterface {
     public other?: () => string;
-
     readonly container: HTMLElement;
 
     private readonly hide: () => void;
     private readonly show: () => void;
     private _field: Field | null = null;
-    private _operator?: () => [string, keyof Localization];
+    private _operator?: () => [string, string];
     private specContainer: HTMLDivElement;
     private label: HTMLSpanElement;
 
-    constructor(fields: Field[] | Readonly<Field[]>, appendChild: (element: HTMLElement) => HTMLElement, private locale: Localization = en) {
+    private fieldSelect: HTMLSelectElement;
+    private operatorSelect: null | HTMLSelectElement = null;
+    private otherInput: null | HTMLInputElement | HTMLSelectElement = null;
+
+    constructor(private fields: Field[] | Readonly<Field[]>, appendChild: (element: HTMLElement) => HTMLElement, private locale: Localization = en, show = true) {
         super();
 
         const container = document.createElement('div');
@@ -49,16 +52,16 @@ export class Filter extends EventTarget implements FilterInterface {
 
         this.container = appendChild(container);
 
-        const filterTypeSelect = this.container.appendChild(document.createElement('select'));
-        let emptyOption: HTMLOptionElement | null = filterTypeSelect.appendChild(document.createElement('option'));
+        const fieldSelect = this.fieldSelect = this.container.appendChild(document.createElement('select'));
+        let emptyOption: HTMLOptionElement | null = fieldSelect.appendChild(document.createElement('option'));
 
-        filterTypeSelect.value = '';
+        fieldSelect.value = '';
         for (const field of fields) {
             const option = document.createElement('option');
             option.value = field.name;
             option.innerText = field.label;
 
-            filterTypeSelect.appendChild(option);
+            fieldSelect.appendChild(option);
         }
 
         this.specContainer = this.container.appendChild(document.createElement('div'));
@@ -83,10 +86,10 @@ export class Filter extends EventTarget implements FilterInterface {
         applyFilterBtn.style.display = 'none';
         applyFilterBtn.addEventListener('click', () => this.applyFilter());
 
-        filterTypeSelect.addEventListener('change', e => {
+        fieldSelect.addEventListener('change', e => {
             e.stopPropagation();
             if (null !== emptyOption) {
-                filterTypeSelect.removeChild(emptyOption);
+                fieldSelect.removeChild(emptyOption);
                 emptyOption = null;
             }
 
@@ -98,33 +101,13 @@ export class Filter extends EventTarget implements FilterInterface {
 
             applyFilterBtn.style.display = 'block';
             this._field = field;
-
-            this.specContainer.innerHTML = '';
-            switch (field.type) {
-                case FieldType.TEXT:
-                    this.createTextFilter();
-                    break;
-
-                case FieldType.NUMBER:
-                case FieldType.DATE:
-                case FieldType.TIME:
-                    this.createNumberFilter(field.type);
-                    break;
-
-                case FieldType.BOOLEAN:
-                    this.createBooleanFilter();
-                    break;
-
-                case FieldType.CHOICE:
-                    this.createChoiceFilter();
-                    break;
-            }
+            this._initFilter();
         });
 
-        filterTypeSelect.focus();
+        fieldSelect.focus();
 
         this.hide = (): void => {
-            filterTypeSelect.style.display = 'none';
+            fieldSelect.style.display = 'none';
             this.specContainer.style.display = 'none';
             applyFilterBtn.style.display = 'none';
             removeFilterBtn.style.display = 'none';
@@ -144,7 +127,7 @@ export class Filter extends EventTarget implements FilterInterface {
                 return;
             }
 
-            filterTypeSelect.style.display = 'block';
+            fieldSelect.style.display = 'block';
             this.specContainer.style.display = 'flex';
             applyFilterBtn.style.display = this._field ? 'block' : 'none';
             removeFilterBtn.style.display = 'block';
@@ -153,7 +136,9 @@ export class Filter extends EventTarget implements FilterInterface {
         }
 
         this.label.addEventListener('click', () => this.show());
-        setTimeout(() => this.show(), 0);
+        if (show) {
+            setTimeout(() => this.show(), 0);
+        }
 
         this.container.addEventListener('keydown', e => {
             if ('Enter' === e.key || 13 === e.which || 13 === e.keyCode) {
@@ -169,16 +154,43 @@ export class Filter extends EventTarget implements FilterInterface {
         return this._field ? this._field.name : '';
     }
 
+    set field(field: string) {
+        const fieldObject = this.fields.find(f => f.name === field);
+        if (! fieldObject) {
+            return;
+        }
+
+        this._field = fieldObject;
+        this.fieldSelect.value = fieldObject.name;
+        this._initFilter();
+    }
+
     get operator(): [string, string] {
         return this._operator ? this._operator() : [ 'eq', this.locale['is equal to'] ];
+    }
+
+    set operator(op: [string, string]) {
+        if (this.operatorSelect) {
+            this.operatorSelect.value = op[0];
+        }
+
+        this._operator = () => op;
     }
 
     get value(): any {
         return this.other ? this.other() : null;
     }
 
+    set value(value: any) {
+        if (this.otherInput) {
+            this.otherInput.value = value;
+        }
+
+        this.other = () => value;
+    }
+
     private createTextFilter() {
-        const operatorSelect = this.specContainer.appendChild(document.createElement('select'));
+        const operatorSelect = this.operatorSelect = this.specContainer.appendChild(document.createElement('select'));
         for (const op of TEXT_OPERATORS) {
             const option = document.createElement('option');
             option.value = op[0];
@@ -187,7 +199,7 @@ export class Filter extends EventTarget implements FilterInterface {
             operatorSelect.appendChild(option);
         }
 
-        const comparandInput = this.specContainer.appendChild(document.createElement('input'));
+        const comparandInput = this.otherInput = this.specContainer.appendChild(document.createElement('input'));
         comparandInput.type = 'text';
         comparandInput.value = '';
 
@@ -205,7 +217,7 @@ export class Filter extends EventTarget implements FilterInterface {
     }
 
     private createNumberFilter(type: FieldType.NUMBER | FieldType.DATE | FieldType.TIME) {
-        const operatorSelect = this.specContainer.appendChild(document.createElement('select'));
+        const operatorSelect = this.operatorSelect = this.specContainer.appendChild(document.createElement('select'));
         for (const op of NUMBER_OPERATORS) {
             const option = document.createElement('option');
             option.value = op[0];
@@ -214,7 +226,7 @@ export class Filter extends EventTarget implements FilterInterface {
             operatorSelect.appendChild(option);
         }
 
-        const comparandInput = this.specContainer.appendChild(document.createElement('input'));
+        const comparandInput = this.otherInput = this.specContainer.appendChild(document.createElement('input'));
         comparandInput.value = '';
         if (FieldType.NUMBER === type) {
             comparandInput.type = 'number';
@@ -238,7 +250,7 @@ export class Filter extends EventTarget implements FilterInterface {
     }
 
     private createBooleanFilter() {
-        const comparandSelect = this.specContainer.appendChild(document.createElement('select'));
+        const comparandSelect = this.otherInput = this.specContainer.appendChild(document.createElement('select'));
         const values: [string, keyof Localization][] = [
             [ '1', 'Yes' ],
             [ '0', 'No' ],
@@ -257,7 +269,7 @@ export class Filter extends EventTarget implements FilterInterface {
     }
 
     private createChoiceFilter() {
-        const comparandSelect = this.specContainer.appendChild(document.createElement('select'));
+        const comparandSelect = this.otherInput = this.specContainer.appendChild(document.createElement('select'));
         let choices: unknown = this._field?.choices ?? [];
 
         const loadChoices = (choices: Choice[] | IterableIterator<Choice>) => {
@@ -293,7 +305,40 @@ export class Filter extends EventTarget implements FilterInterface {
         this.other = () => comparandSelect.value;
     }
 
-    private applyFilter() {
+    private _initFilter() {
+        const field = this._field;
+        if (! field) {
+            return;
+        }
+
+        this.specContainer.innerHTML = '';
+        this.operatorSelect = null;
+        this.otherInput = null;
+        switch (field.type) {
+            case FieldType.TEXT:
+                this.createTextFilter();
+                break;
+
+            case FieldType.NUMBER:
+            case FieldType.DATE:
+            case FieldType.TIME:
+                this.createNumberFilter(field.type);
+                break;
+
+            case FieldType.BOOLEAN:
+                this.createBooleanFilter();
+                break;
+
+            case FieldType.CHOICE:
+                this.createChoiceFilter();
+                break;
+        }
+    }
+
+    /**
+     * @internal
+     */
+    applyFilter() {
         if (! this._operator || ! this.other || ! this._field) {
             return;
         }
@@ -301,7 +346,7 @@ export class Filter extends EventTarget implements FilterInterface {
         const operator = this._operator();
         const other = this.other();
 
-        this.label.innerText = (this._field.label ?? this._field.name) + ' ' + this.locale[operator[1]];
+        this.label.innerText = (this._field.label ?? this._field.name) + ' ' + this.locale[operator[1] as keyof Localization];
         if ('null' !== operator[0] && 'notnull' !== operator[0]) {
             this.label.innerText += ' "' + other + '"';
         }

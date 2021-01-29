@@ -6,6 +6,7 @@
     --facets-js-border-radius: .25rem;
     --facets-js-dropdown-bg: #fff;
     --facets-js-dropdown-border: 1px solid #333;
+    --facets-js-dropdown-max-heihght: 5rem;
     --facets-js-bg: #fff;
 }
 
@@ -22,6 +23,16 @@ i[class^="facets-ico-"]:before, i[class*=" facets-ico-"]:before {
         background: var(--facets-js-dropdown-bg);
         border-radius: var(--facets-js-border-radius);
         border: var(--facets-js-dropdown-border);
+        max-height: var(--facets-js-dropdown-max-heihght);
+
+        > div {
+            padding: 2.5px;
+
+            &.selected {
+                background: blue;
+                color: white;
+            }
+        }
     }
 
     .facets-js-hide {
