@@ -1,5 +1,43 @@
 import EventTarget from 'event-target-shim';
 
+const en = {
+    'is equal to': 'is equal to',
+    'is not equal to': 'is not equal to',
+    'contains': 'contains',
+    'does not contain': 'does not contain',
+    'starts with': 'starts with',
+    'ends with': 'ends with',
+    'is empty': 'is empty',
+    'is not empty': 'is not empty',
+    'greater than': 'greater than',
+    'greater than or equal': 'greater than or equal',
+    'less than': 'less than',
+    'less than or equal': 'less than or equal',
+    'loading': 'Loading...',
+    'error while loading options': 'Error while loading options',
+    Yes: 'Yes',
+    No: 'No',
+};
+
+const it = {
+    'is equal to': 'è uguale a',
+    'is not equal to': 'non è uguale a',
+    'contains': 'contiene',
+    'does not contain': 'non contiene',
+    'starts with': 'inizia per',
+    'ends with': 'finisce con',
+    'is empty': 'è vuoto',
+    'is not empty': 'non è vuoto',
+    'greater than': 'è maggiore di',
+    'greater than or equal': 'è maggiore o uguale a',
+    'less than': 'è minore di',
+    'less than or equal': 'è minore o uguale a',
+    'loading': 'Caricamento...',
+    'error while loading options': 'Errore durante il caricamento delle opzioni',
+    Yes: 'Sì',
+    No: 'No',
+};
+
 var FieldType;
 (function (FieldType) {
     FieldType["TEXT"] = "text";
@@ -33,25 +71,6 @@ const createButton = (className, label, icon) => {
         el.innerText = label;
     }
     return el;
-};
-
-const en = {
-    'is equal to': 'is equal to',
-    'is not equal to': 'is not equal to',
-    'contains': 'contains',
-    'does not contain': 'does not contain',
-    'starts with': 'starts with',
-    'ends with': 'ends with',
-    'is empty': 'is empty',
-    'is not empty': 'is not empty',
-    'greater than': 'greater than',
-    'greater than or equal': 'greater than or equal',
-    'less than': 'less than',
-    'less than or equal': 'less than or equal',
-    'loading': 'Loading...',
-    'error while loading options': 'Error while loading options',
-    Yes: 'Yes',
-    No: 'No',
 };
 
 const TEXT_OPERATORS = [
@@ -398,8 +417,11 @@ class Facets extends EventTarget {
         this.inputBox.addEventListener('keydown', this.onInput.bind(this));
         this.inputBox.addEventListener('keypress', this.onInput.bind(this));
         this.inputBox.addEventListener('click', this.onInput.bind(this));
-        this.dropdown = this.element.appendChild(document.createElement('div'));
+        this.dropdown = document.body.appendChild(document.createElement('div'));
         this.dropdown.classList.add('facets-js-dropdown', 'facets-js-hide');
+    }
+    destroy() {
+        document.body.removeChild(this.dropdown);
     }
     get appliedFilters() {
         return [...this._appliedFilters.values()];
@@ -534,5 +556,10 @@ class Facets extends EventTarget {
     }
 }
 
-export { Facets, Field, FieldType, Filter };
+const locales = {
+    en: en,
+    it: it,
+};
+
+export { Facets, Field, FieldType, Filter, locales };
 //# sourceMappingURL=facets-js.js.map

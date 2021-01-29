@@ -25,6 +25,7 @@ export declare class Facets extends EventTarget {
     private readonly dropdown;
     private dropdownSelected;
     constructor(element: HTMLDivElement, options?: Partial<FacetsOptions>);
+    destroy(): void;
     get appliedFilters(): FilterInterface[];
     private onInput;
     private createFilter;

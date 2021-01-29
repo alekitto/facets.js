@@ -91,8 +91,12 @@ export class Facets extends EventTarget {
         this.inputBox.addEventListener('keypress', this.onInput.bind(this));
         this.inputBox.addEventListener('click', this.onInput.bind(this));
 
-        this.dropdown = this.element.appendChild(document.createElement('div'));
+        this.dropdown = document.body.appendChild(document.createElement('div'));
         this.dropdown.classList.add('facets-js-dropdown', 'facets-js-hide');
+    }
+
+    destroy() {
+        document.body.removeChild(this.dropdown);
     }
 
     get appliedFilters() {

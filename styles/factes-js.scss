@@ -14,30 +14,30 @@ i[class^="facets-ico-"]:before, i[class*=" facets-ico-"]:before {
     font-size: var(--facets-js-icon-height);
 }
 
+.facets-js-dropdown {
+    position: absolute;
+    background: var(--facets-js-dropdown-bg);
+    border-radius: var(--facets-js-border-radius);
+    border: var(--facets-js-dropdown-border);
+    max-height: var(--facets-js-dropdown-max-heihght);
+
+    > div {
+        padding: 2.5px;
+
+        &.selected {
+            background: blue;
+            color: white;
+        }
+    }
+}
+
+.facets-js-hide {
+    display: none;
+}
+
 .facets-js-wrapper {
     min-height: var(--facets-js-min-height);
     background: var(--facets-js-bg);
-
-    .facets-js-dropdown {
-        position: absolute;
-        background: var(--facets-js-dropdown-bg);
-        border-radius: var(--facets-js-border-radius);
-        border: var(--facets-js-dropdown-border);
-        max-height: var(--facets-js-dropdown-max-heihght);
-
-        > div {
-            padding: 2.5px;
-
-            &.selected {
-                background: blue;
-                color: white;
-            }
-        }
-    }
-
-    .facets-js-hide {
-        display: none;
-    }
 
     &:active, &:focus, &:focus-within {
         outline: auto 2px Highlight;

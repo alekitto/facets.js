@@ -1,6 +1,6 @@
 @font-face {
   font-family: "facets-js-icons";
-  src: url("../dist/icons/547b19fd.woff2?b2a4a50fc2aff8cfb6020b8a6a9e3f16") format("woff2"), url("../dist/icons/322ff544.woff?b2a4a50fc2aff8cfb6020b8a6a9e3f16") format("woff"), url("../dist/icons/9d5ffe18.eot?b2a4a50fc2aff8cfb6020b8a6a9e3f16#iefix") format("embedded-opentype"), url("../dist/icons/f0024f52.ttf?b2a4a50fc2aff8cfb6020b8a6a9e3f16") format("truetype"); }
+  src: url("../dist/icons/34fa5d08.woff2?b2a4a50fc2aff8cfb6020b8a6a9e3f16") format("woff2"), url("../dist/icons/4d1b66ce.woff?b2a4a50fc2aff8cfb6020b8a6a9e3f16") format("woff"), url("../dist/icons/5bcd361b.eot?b2a4a50fc2aff8cfb6020b8a6a9e3f16#iefix") format("embedded-opentype"), url("../dist/icons/448626b.ttf?b2a4a50fc2aff8cfb6020b8a6a9e3f16") format("truetype"); }
 
 i[class^="facets-ico-"]:before, i[class*=" facets-ico-"]:before {
   font-family: "facets-js-icons" !important;
@@ -54,22 +54,24 @@ i[class^="facets-ico-"]:before, i[class*=" facets-ico-"]:before {
 i[class^="facets-ico-"]:before, i[class*=" facets-ico-"]:before {
   font-size: var(--facets-js-icon-height); }
 
+.facets-js-dropdown {
+  position: absolute;
+  background: var(--facets-js-dropdown-bg);
+  border-radius: var(--facets-js-border-radius);
+  border: var(--facets-js-dropdown-border);
+  max-height: var(--facets-js-dropdown-max-heihght); }
+  .facets-js-dropdown > div {
+    padding: 2.5px; }
+    .facets-js-dropdown > div.selected {
+      background: blue;
+      color: white; }
+
+.facets-js-hide {
+  display: none; }
+
 .facets-js-wrapper {
   min-height: var(--facets-js-min-height);
   background: var(--facets-js-bg); }
-  .facets-js-wrapper .facets-js-dropdown {
-    position: absolute;
-    background: var(--facets-js-dropdown-bg);
-    border-radius: var(--facets-js-border-radius);
-    border: var(--facets-js-dropdown-border);
-    max-height: var(--facets-js-dropdown-max-heihght); }
-    .facets-js-wrapper .facets-js-dropdown > div {
-      padding: 2.5px; }
-      .facets-js-wrapper .facets-js-dropdown > div.selected {
-        background: blue;
-        color: white; }
-  .facets-js-wrapper .facets-js-hide {
-    display: none; }
   .facets-js-wrapper:active, .facets-js-wrapper:focus, .facets-js-wrapper:focus-within {
     outline: auto 2px Highlight;
     outline: auto 5px -webkit-focus-ring-color; }

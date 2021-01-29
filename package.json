@@ -12,6 +12,7 @@
     "browser": "dist/facets-js.umd.js",
     "main": "dist/facets-js.cjs.js",
     "module": "dist/facets-js.js",
+    "typings": "dist/facets-js.d.ts",
     "devDependencies": {
         "@babel/cli": "^7.12.10",
         "@babel/core": "^7.12.10",

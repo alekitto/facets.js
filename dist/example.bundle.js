@@ -1657,6 +1657,24 @@
 	function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
 	function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+	var en = {
+	  'is equal to': 'is equal to',
+	  'is not equal to': 'is not equal to',
+	  'contains': 'contains',
+	  'does not contain': 'does not contain',
+	  'starts with': 'starts with',
+	  'ends with': 'ends with',
+	  'is empty': 'is empty',
+	  'is not empty': 'is not empty',
+	  'greater than': 'greater than',
+	  'greater than or equal': 'greater than or equal',
+	  'less than': 'less than',
+	  'less than or equal': 'less than or equal',
+	  'loading': 'Loading...',
+	  'error while loading options': 'Error while loading options',
+	  Yes: 'Yes',
+	  No: 'No'
+	};
 	var FieldType;
 
 	(function (FieldType) {
@@ -1694,24 +1712,6 @@
 	  return el;
 	};
 
-	var en = {
-	  'is equal to': 'is equal to',
-	  'is not equal to': 'is not equal to',
-	  'contains': 'contains',
-	  'does not contain': 'does not contain',
-	  'starts with': 'starts with',
-	  'ends with': 'ends with',
-	  'is empty': 'is empty',
-	  'is not empty': 'is not empty',
-	  'greater than': 'greater than',
-	  'greater than or equal': 'greater than or equal',
-	  'less than': 'less than',
-	  'less than or equal': 'less than or equal',
-	  'loading': 'Loading...',
-	  'error while loading options': 'Error while loading options',
-	  Yes: 'Yes',
-	  No: 'No'
-	};
 	var TEXT_OPERATORS = [['eq', 'is equal to'], ['neq', 'is not equal to'], ['ct', 'contains'], ['nct', 'does not contain'], ['sw', 'starts with'], ['ew', 'ends with'], ['null', 'is empty'], ['notnull', 'is not empty']];
 	var NUMBER_OPERATORS = [['eq', 'is equal to'], ['neq', 'is not equal to'], ['gt', 'greater than'], ['gte', 'greater than or equal'], ['lt', 'less than'], ['lte', 'less than or equal'], ['null', 'is empty'], ['notnull', 'is not empty']];
 
@@ -2230,7 +2230,7 @@
 
 	    _this3.inputBox.addEventListener('click', _this3.onInput.bind(assertThisInitialized(_this3)));
 
-	    _this3.dropdown = _this3.element.appendChild(document.createElement('div'));
+	    _this3.dropdown = document.body.appendChild(document.createElement('div'));
 
 	    _this3.dropdown.classList.add('facets-js-dropdown', 'facets-js-hide');
 
@@ -2238,6 +2238,10 @@
 	  }
 
 	  var _proto2 = Facets.prototype;
+
+	  _proto2.destroy = function destroy() {
+	    document.body.removeChild(this.dropdown);
+	  };
 
 	  _proto2.onInput = function onInput(e) {
 	    var _this4 = this;

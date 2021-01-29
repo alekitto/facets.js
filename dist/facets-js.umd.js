@@ -4,6 +4,44 @@
     (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.FacetsJs = {}));
 }(this, (function (exports) { 'use strict';
 
+    const en = {
+        'is equal to': 'is equal to',
+        'is not equal to': 'is not equal to',
+        'contains': 'contains',
+        'does not contain': 'does not contain',
+        'starts with': 'starts with',
+        'ends with': 'ends with',
+        'is empty': 'is empty',
+        'is not empty': 'is not empty',
+        'greater than': 'greater than',
+        'greater than or equal': 'greater than or equal',
+        'less than': 'less than',
+        'less than or equal': 'less than or equal',
+        'loading': 'Loading...',
+        'error while loading options': 'Error while loading options',
+        Yes: 'Yes',
+        No: 'No',
+    };
+
+    const it = {
+        'is equal to': 'è uguale a',
+        'is not equal to': 'non è uguale a',
+        'contains': 'contiene',
+        'does not contain': 'non contiene',
+        'starts with': 'inizia per',
+        'ends with': 'finisce con',
+        'is empty': 'è vuoto',
+        'is not empty': 'non è vuoto',
+        'greater than': 'è maggiore di',
+        'greater than or equal': 'è maggiore o uguale a',
+        'less than': 'è minore di',
+        'less than or equal': 'è minore o uguale a',
+        'loading': 'Caricamento...',
+        'error while loading options': 'Errore durante il caricamento delle opzioni',
+        Yes: 'Sì',
+        No: 'No',
+    };
+
     (function (FieldType) {
         FieldType["TEXT"] = "text";
         FieldType["BOOLEAN"] = "boolean";
@@ -897,25 +935,6 @@
         return el;
     };
 
-    const en = {
-        'is equal to': 'is equal to',
-        'is not equal to': 'is not equal to',
-        'contains': 'contains',
-        'does not contain': 'does not contain',
-        'starts with': 'starts with',
-        'ends with': 'ends with',
-        'is empty': 'is empty',
-        'is not empty': 'is not empty',
-        'greater than': 'greater than',
-        'greater than or equal': 'greater than or equal',
-        'less than': 'less than',
-        'less than or equal': 'less than or equal',
-        'loading': 'Loading...',
-        'error while loading options': 'Error while loading options',
-        Yes: 'Yes',
-        No: 'No',
-    };
-
     const TEXT_OPERATORS = [
         ['eq', 'is equal to'],
         ['neq', 'is not equal to'],
@@ -1260,8 +1279,11 @@
             this.inputBox.addEventListener('keydown', this.onInput.bind(this));
             this.inputBox.addEventListener('keypress', this.onInput.bind(this));
             this.inputBox.addEventListener('click', this.onInput.bind(this));
-            this.dropdown = this.element.appendChild(document.createElement('div'));
+            this.dropdown = document.body.appendChild(document.createElement('div'));
             this.dropdown.classList.add('facets-js-dropdown', 'facets-js-hide');
+        }
+        destroy() {
+            document.body.removeChild(this.dropdown);
         }
         get appliedFilters() {
             return [...this._appliedFilters.values()];
@@ -1396,9 +1418,15 @@
         }
     }
 
+    const locales = {
+        en: en,
+        it: it,
+    };
+
     exports.Facets = Facets;
     exports.Field = Field;
     exports.Filter = Filter;
+    exports.locales = locales;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 
