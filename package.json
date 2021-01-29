@@ -1,5 +1,5 @@
 {
-    "name": "facets.js",
+    "name": "facets-js",
     "version": "1.0.0",
     "scripts": {
         "build": "npm run build-icons && npm run build-js",
