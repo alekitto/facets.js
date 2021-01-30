@@ -17,7 +17,7 @@ export type FieldProps = BaseFieldProps & ({
     type: Exclude<FieldType, FieldType.CHOICE>;
 } | {
     type: FieldType.CHOICE;
-    choices: ChoicesLoader;
+    choices: null | ChoicesLoader;
 });
 
 export class Field {

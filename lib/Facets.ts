@@ -48,7 +48,7 @@ export class Facets extends EventTarget {
     private readonly filters: Filter[] = [];
     private readonly _appliedFilters = new Set<FilterInterface>();
     private readonly dropdown: HTMLDivElement;
-    private dropdownSelected: number = -1;
+    private dropdownSelected = -1;
 
     constructor(private element: HTMLDivElement, options: Partial<FacetsOptions> = {}) {
         super();
