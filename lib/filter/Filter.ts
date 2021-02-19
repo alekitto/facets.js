@@ -28,6 +28,12 @@ const NUMBER_OPERATORS: [string, keyof Localization][] = [
     [ 'notnull', 'is not empty' ],
 ];
 
+const isBlink: boolean = (() => {
+    const ua = navigator.userAgent;
+
+    return /(?:AppleWebKit|Chrome)/.test(ua);
+})();
+
 export class Filter extends EventTarget implements FilterInterface {
     public other?: () => string;
     readonly container: HTMLElement;
@@ -57,11 +63,24 @@ export class Filter extends EventTarget implements FilterInterface {
 
         fieldSelect.value = '';
         for (const field of fields) {
-            const option = document.createElement('option');
-            option.value = field.name;
-            option.innerText = field.label;
+            if (field.type === FieldType.SEPARATOR) {
+                let element;
+                if (isBlink) {
+                    element = document.createElement('hr');
+                } else {
+                    element = document.createElement('option');
+                    element.disabled = true;
+                    element.value = '--------------------';
+                }
 
-            fieldSelect.appendChild(option);
+                fieldSelect.appendChild(element);
+            } else {
+                const option = document.createElement('option');
+                option.value = field.name;
+                option.innerText = field.label;
+
+                fieldSelect.appendChild(option);
+            }
         }
 
         this.specContainer = this.container.appendChild(document.createElement('div'));
@@ -332,6 +351,11 @@ export class Filter extends EventTarget implements FilterInterface {
             case FieldType.CHOICE:
                 this.createChoiceFilter();
                 break;
+
+            case FieldType.CUSTOM:
+                this._operator = () => [ '', '' ];
+                this.other = () => field.value;
+                break;
         }
     }
 
@@ -346,9 +370,12 @@ export class Filter extends EventTarget implements FilterInterface {
         const operator = this._operator();
         const other = this.other();
 
-        this.label.innerText = (this._field.label ?? this._field.name) + ' ' + this.locale[operator[1] as keyof Localization];
-        if ('null' !== operator[0] && 'notnull' !== operator[0]) {
-            this.label.innerText += ' "' + other + '"';
+        this.label.innerText = (this._field.label ?? this._field.name);
+        if (operator[0]) {
+            this.label.innerText += ' ' + this.locale[operator[1] as keyof Localization];
+            if ('null' !== operator[0] && 'notnull' !== operator[0]) {
+                this.label.innerText += ' "' + other + '"';
+            }
         }
 
         this.hide();

@@ -135,7 +135,7 @@ export class Facets extends EventTarget {
             if ('Enter' === e.key || 13 === e.which || 13 === e.keyCode) {
                 if (-1 !== this.dropdownSelected) {
                     applyFilter(choices[this.dropdownSelected]);
-                } else if (this.inputBox.value !== '') {
+                } else if ('' !== this.inputBox.value) {
                     this.dropdown.classList.remove('facets-js-hide');
                 }
 

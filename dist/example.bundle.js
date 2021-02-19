@@ -1684,6 +1684,8 @@
 	  FieldType["DATE"] = "date";
 	  FieldType["TIME"] = "time";
 	  FieldType["CHOICE"] = "choice";
+	  FieldType["CUSTOM"] = "custom";
+	  FieldType["SEPARATOR"] = "separator";
 	})(FieldType || (FieldType = {}));
 
 	var Field = function Field(props) {
@@ -1693,6 +1695,7 @@
 	  this.label = (_props$label = props.label) != null ? _props$label : props.name;
 	  this.type = props.type;
 	  this.choices = props.type === FieldType.CHOICE ? props.choices : null;
+	  this.value = props.type === FieldType.CUSTOM ? props.value : undefined;
 	};
 
 	var createButton = function createButton(className, label, icon) {
@@ -1714,6 +1717,11 @@
 
 	var TEXT_OPERATORS = [['eq', 'is equal to'], ['neq', 'is not equal to'], ['ct', 'contains'], ['nct', 'does not contain'], ['sw', 'starts with'], ['ew', 'ends with'], ['null', 'is empty'], ['notnull', 'is not empty']];
 	var NUMBER_OPERATORS = [['eq', 'is equal to'], ['neq', 'is not equal to'], ['gt', 'greater than'], ['gte', 'greater than or equal'], ['lt', 'less than'], ['lte', 'less than or equal'], ['null', 'is empty'], ['notnull', 'is not empty']];
+
+	var isBlink = function () {
+	  var ua = navigator.userAgent;
+	  return /(?:AppleWebKit|Chrome)/.test(ua);
+	}();
 
 	var Filter = /*#__PURE__*/function (_EventTarget) {
 	  inheritsLoose(Filter, _EventTarget);
@@ -1747,10 +1755,25 @@
 
 	    for (var _iterator = _createForOfIteratorHelperLoose(fields), _step; !(_step = _iterator()).done;) {
 	      var field = _step.value;
-	      var option = document.createElement('option');
-	      option.value = field.name;
-	      option.innerText = field.label;
-	      fieldSelect.appendChild(option);
+
+	      if (field.type === FieldType.SEPARATOR) {
+	        var element = void 0;
+
+	        if (isBlink) {
+	          element = document.createElement('hr');
+	        } else {
+	          element = document.createElement('option');
+	          element.disabled = true;
+	          element.value = '--------------------';
+	        }
+
+	        fieldSelect.appendChild(element);
+	      } else {
+	        var option = document.createElement('option');
+	        option.value = field.name;
+	        option.innerText = field.label;
+	        fieldSelect.appendChild(option);
+	      }
 	    }
 
 	    _this.specContainer = _this.container.appendChild(document.createElement('div'));
@@ -2029,6 +2052,17 @@
 	      case FieldType.CHOICE:
 	        this.createChoiceFilter();
 	        break;
+
+	      case FieldType.CUSTOM:
+	        this._operator = function () {
+	          return ['', ''];
+	        };
+
+	        this.other = function () {
+	          return field.value;
+	        };
+
+	        break;
 	    }
 	  }
 	  /**
@@ -2046,10 +2080,14 @@
 	    var operator = this._operator();
 
 	    var other = this.other();
-	    this.label.innerText = ((_this$_field$label = this._field.label) != null ? _this$_field$label : this._field.name) + ' ' + this.locale[operator[1]];
+	    this.label.innerText = (_this$_field$label = this._field.label) != null ? _this$_field$label : this._field.name;
 
-	    if ('null' !== operator[0] && 'notnull' !== operator[0]) {
-	      this.label.innerText += ' "' + other + '"';
+	    if (operator[0]) {
+	      this.label.innerText += ' ' + this.locale[operator[1]];
+
+	      if ('null' !== operator[0] && 'notnull' !== operator[0]) {
+	        this.label.innerText += ' "' + other + '"';
+	      }
 	    }
 
 	    this.hide();
@@ -2283,7 +2321,7 @@
 	      if ('Enter' === e.key || 13 === e.which || 13 === e.keyCode) {
 	        if (-1 !== this.dropdownSelected) {
 	          applyFilter(choices[this.dropdownSelected]);
-	        } else if (this.inputBox.value !== '') {
+	        } else if ('' !== this.inputBox.value) {
 	          this.dropdown.classList.remove('facets-js-hide');
 	        }
 
@@ -2441,11 +2479,19 @@
 	        { name: 'name', label: 'Nome', type: FieldType.TEXT },
 	        { name: 'age', label: 'Età', type: FieldType.NUMBER },
 	        { name: 'Foo', label: 'foo', type: FieldType.BOOLEAN },
+	        { name: 'sep1', type: FieldType.SEPARATOR },
 	        { name: 'date', label: 'Data', type: FieldType.DATE },
 	        { name: 'time', label: 'Ora', type: FieldType.TIME },
 	        { name: 'select', label: 'Scelta', type: FieldType.CHOICE, choices: [
 	                { label: 'Good!', value: 'good' },
-	                { label: 'Bad!', value: 'bad' }
+	                { label: 'Bad!', value: 'bad' },
+	            ] },
+	        { name: 'custom', label: 'My filter', type: FieldType.CUSTOM, value: [
+	                {
+	                    field: 'name',
+	                    operator: ['eq', 'is equal to'],
+	                    value: 'Foobar',
+	                },
 	            ] },
 	    ],
 	});

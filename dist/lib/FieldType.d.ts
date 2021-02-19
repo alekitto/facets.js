@@ -4,5 +4,7 @@ export declare enum FieldType {
     NUMBER = "number",
     DATE = "date",
     TIME = "time",
-    CHOICE = "choice"
+    CHOICE = "choice",
+    CUSTOM = "custom",
+    SEPARATOR = "separator"
 }

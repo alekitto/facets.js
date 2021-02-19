@@ -2,7 +2,7 @@
     "name": "facets-js",
     "version": "1.0.0",
     "scripts": {
-        "build": "npm run build-icons && npm run build-js",
+        "build": "rimraf dist && npm run build-icons && npm run build-js",
         "build-icons": "mkdirp styles/icons && fantasticon",
         "build-js": "rollup -c --sourcemap",
         "dev": "rollup -c --sourcemap --watch",
@@ -32,6 +32,7 @@
         "node-sass": "^5.0.0",
         "postcss": "^8.2.1",
         "postcss-url": "^10.1.1",
+        "rimraf": "^3.0",
         "rollup": "^2.35",
         "rollup-plugin-livereload": "^2.0.0",
         "rollup-plugin-scss": "^2.6.1",

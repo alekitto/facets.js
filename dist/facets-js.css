@@ -1,6 +1,6 @@
 @font-face {
   font-family: "facets-js-icons";
-  src: url("../dist/icons/6d5a695d.woff2?b2a4a50fc2aff8cfb6020b8a6a9e3f16") format("woff2"), url("../dist/icons/3d9a1ff8.woff?b2a4a50fc2aff8cfb6020b8a6a9e3f16") format("woff"), url("../dist/icons/a095be3d.eot?b2a4a50fc2aff8cfb6020b8a6a9e3f16#iefix") format("embedded-opentype"), url("../dist/icons/f04b7f8f.ttf?b2a4a50fc2aff8cfb6020b8a6a9e3f16") format("truetype"); }
+  src: url("../dist/icons/24a3617f.woff2?b2a4a50fc2aff8cfb6020b8a6a9e3f16") format("woff2"), url("../dist/icons/6fba86a3.woff?b2a4a50fc2aff8cfb6020b8a6a9e3f16") format("woff"), url("../dist/icons/d60c66fa.eot?b2a4a50fc2aff8cfb6020b8a6a9e3f16#iefix") format("embedded-opentype"), url("../dist/icons/3cd2169a.ttf?b2a4a50fc2aff8cfb6020b8a6a9e3f16") format("truetype"); }
 
 i[class^="facets-ico-"]:before, i[class*=" facets-ico-"]:before {
   font-family: "facets-js-icons" !important;

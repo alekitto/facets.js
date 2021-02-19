@@ -49,6 +49,8 @@
         FieldType["DATE"] = "date";
         FieldType["TIME"] = "time";
         FieldType["CHOICE"] = "choice";
+        FieldType["CUSTOM"] = "custom";
+        FieldType["SEPARATOR"] = "separator";
     })(exports.FieldType || (exports.FieldType = {}));
 
     class Field {
@@ -57,6 +59,7 @@
             this.label = props.label ?? props.name;
             this.type = props.type;
             this.choices = props.type === exports.FieldType.CHOICE ? props.choices : null;
+            this.value = props.type === exports.FieldType.CUSTOM ? props.value : undefined;
         }
     }
 
@@ -955,6 +958,10 @@
         ['null', 'is empty'],
         ['notnull', 'is not empty'],
     ];
+    const isBlink = (() => {
+        const ua = navigator.userAgent;
+        return /(?:AppleWebKit|Chrome)/.test(ua);
+    })();
     class Filter extends EventTarget {
         constructor(fields, appendChild, locale = en, show = true) {
             super();
@@ -971,10 +978,24 @@
             let emptyOption = fieldSelect.appendChild(document.createElement('option'));
             fieldSelect.value = '';
             for (const field of fields) {
-                const option = document.createElement('option');
-                option.value = field.name;
-                option.innerText = field.label;
-                fieldSelect.appendChild(option);
+                if (field.type === exports.FieldType.SEPARATOR) {
+                    let element;
+                    if (isBlink) {
+                        element = document.createElement('hr');
+                    }
+                    else {
+                        element = document.createElement('option');
+                        element.disabled = true;
+                        element.value = '--------------------';
+                    }
+                    fieldSelect.appendChild(element);
+                }
+                else {
+                    const option = document.createElement('option');
+                    option.value = field.name;
+                    option.innerText = field.label;
+                    fieldSelect.appendChild(option);
+                }
             }
             this.specContainer = this.container.appendChild(document.createElement('div'));
             this.specContainer.style.display = 'flex';
@@ -1192,6 +1213,10 @@
                 case exports.FieldType.CHOICE:
                     this.createChoiceFilter();
                     break;
+                case exports.FieldType.CUSTOM:
+                    this._operator = () => ['', ''];
+                    this.other = () => field.value;
+                    break;
             }
         }
         /**
@@ -1203,9 +1228,12 @@
             }
             const operator = this._operator();
             const other = this.other();
-            this.label.innerText = (this._field.label ?? this._field.name) + ' ' + this.locale[operator[1]];
-            if ('null' !== operator[0] && 'notnull' !== operator[0]) {
-                this.label.innerText += ' "' + other + '"';
+            this.label.innerText = (this._field.label ?? this._field.name);
+            if (operator[0]) {
+                this.label.innerText += ' ' + this.locale[operator[1]];
+                if ('null' !== operator[0] && 'notnull' !== operator[0]) {
+                    this.label.innerText += ' "' + other + '"';
+                }
             }
             this.hide();
             this.dispatchEvent(new CustomEvent('apply-filter', {
@@ -1315,7 +1343,7 @@
                     if (-1 !== this.dropdownSelected) {
                         applyFilter(choices[this.dropdownSelected]);
                     }
-                    else if (this.inputBox.value !== '') {
+                    else if ('' !== this.inputBox.value) {
                         this.dropdown.classList.remove('facets-js-hide');
                     }
                     return;
